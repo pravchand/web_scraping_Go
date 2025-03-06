@@ -1,3 +1,3 @@
-module proj3-redesigned
+module proj3
 
-go 1.19
+go 1.23.4
