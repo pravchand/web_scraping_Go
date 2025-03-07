@@ -1,5 +1,9 @@
 package main
 
+// the main interface for the workflow
+// use it like "go run parse.go 100 2 true" - 100 links, 2 threads and workstealing
+// "go run parse.go 100" - 100 links sequential
+
 import (
 	"fmt"
 	"os"
@@ -9,7 +13,7 @@ import (
 	)
 
 const usage = `Usage: parse <number of links to parse> <number of threads> <work stealing (true/false)>
-    <number of threads> = the number of goroutines to be part of the parallel version.`
+    <number of threads> = the number of goroutines that will parallely scrape and store.`
 
 func main() {
 	if len(os.Args) < 2 || len(os.Args) > 4 {
@@ -18,9 +22,10 @@ func main() {
 	}
 	
 	var c parsingSupport.Config
+	// The podcast website has only 400 links. Hence preventing excess input
 	numLinks, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		fmt.Println("Error: Invalid number of links")
+	if err != nil || numLinks > 400{
+		fmt.Println("Error: Invalid number of links or above 400 links entered")
 		fmt.Println(usage)
 		return
 	}
@@ -30,14 +35,14 @@ func main() {
 		c.Mode = "p"
 		threads, err := strconv.Atoi(os.Args[2])
 		if err != nil {
-			fmt.Println("Error: Invalid number of threads")
+			fmt.Println("Invalid number of threads")
 			fmt.Println(usage)
 			return
 		}
 		c.NumThreads = threads
 		workStealing, err := strconv.ParseBool(os.Args[3])
 		if err != nil {
-			fmt.Println("Error: Invalid work stealing")
+			fmt.Println("Invalid work stealing")
 			fmt.Println(usage)
 			return
 		}

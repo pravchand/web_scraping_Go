@@ -15,8 +15,9 @@ func ParseAndTokenize(html string) []string {
 			break
 		}
 		startIndex += currentIndex 
-
+		
 		endIndex := strings.Index(html[startIndex:], endTag)
+		// my HTML has multiple text classes, hence i will not ever traverse till the last line
 		if endIndex == -1 {
 			break 
 		}
@@ -31,15 +32,14 @@ func ParseAndTokenize(html string) []string {
 	return tokenizedTexts
 }
 
+// https://pkg.go.dev/strings#LastIndex
 func ExtractFilenameFromURL(url string) string {
     // Extract just the filename part (the number) from the URL
-    // For example, from "https://saket-choudhary.me/seenunseencap/42.html"
-    // extract "42"
+    // For example, from "https://saket-choudhary.me/seenunseencap/42.html",extract "42"
     
-    // Find the last slash and the dot before extension
-    lastSlash := strings.LastIndex(url, "/")
-    lastDot := strings.LastIndex(url, ".")
+    slash := strings.LastIndex(url, "/")
+    dot := strings.LastIndex(url, ".")
     
-    return url[lastSlash+1:lastDot]
+    return url[slash+1:dot]
 }
 

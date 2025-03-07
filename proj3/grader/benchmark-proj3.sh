@@ -6,7 +6,7 @@
 #SBATCH --output=./slurm/out/%j.%N.stdout
 #SBATCH --error=./slurm/out/%j.%N.stderr
 #SBATCH --chdir=/home/praveenc/project-3-pravchand/proj3/benchmark
-#SBATCH --partition=general 
+#SBATCH --partition=debug 
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
@@ -21,8 +21,7 @@ thread_counts=(2 4 6 8 12)
 work_stealing_options=(true false)
 runs=5
 
-mkdir -p benchmark_results
-mkdir -p slurm/out
+
 
 echo "Running benchmark tests with $(date)"
 
@@ -121,4 +120,4 @@ EOF
 echo "Generating speedup plots..."
 python3 plot_speedup.py
 
-echo "Benchmark completed!"
+echo "Benchmark completed"

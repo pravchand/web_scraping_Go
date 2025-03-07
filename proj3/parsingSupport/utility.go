@@ -13,6 +13,7 @@ type Config struct{
 	WorkStealing bool
 }
 
+// this struct can be expanded in the future to hold other task specific things
 type Task struct{
 	Url string
 }
@@ -22,6 +23,7 @@ type Result struct{
 	Content []string
 }	
 
+// https://pkg.go.dev/os#WriteFile
 func WriteResult(result Result, count int) {
     urlParts := ExtractFilenameFromURL(result.Url)
     dataPath := "/home/praveenc/project-3-pravchand/proj3/outputdata/" + urlParts + ".txt"
@@ -31,7 +33,7 @@ func WriteResult(result Result, count int) {
     contentBytes := []byte(strings.Join(result.Content, "\n"))
     err := os.WriteFile(dataPath, contentBytes, 0644)
     if err != nil {
-        fmt.Printf("ERROR: Could not write to file %s: %v", dataPath, err)
+        fmt.Printf("ERROR: Could not write to file %v", err)
 		return
 	}
 	
