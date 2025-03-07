@@ -119,7 +119,7 @@ func runSequential(c parsingSupport.Config) error {
 ///////////////////////////////////////////////////////////////////////////
 // PARALLEL - Pipeline implementation
 ///////////////////////////////////////////////////////////////////////////
-// currently,no error channel, but can be extended to include on
+// currently,no error channel, but can be extended to include one
 
 func runParallel(c parsingSupport.Config) error {
 	links := generatePipelineLinks(c.NumLinks)
@@ -179,17 +179,17 @@ func processStage(in <-chan parsingSupport.Task, c parsingSupport.Config) <-chan
 	
     // A single go routine to fill the queues and send them to the workers
 	go func() {
-		workerIdx := 0
+		workerIndex := 0
 		taskCount := 0
 		for task := range in {
             // Round robin to fill the queues
-			if err := deques[workerIdx].PushBottom(parsingSupport.Task{Url: task.Url}); err == nil {
+			if err := deques[workerIndex].PushBottom(parsingSupport.Task{Url: task.Url}); err == nil {
 				taskCount++
 			} else {
 				fmt.Printf("Failed to queue task: %v", err)
 			}
             // This helps increment and wrap back to the first queue
-			workerIdx = (workerIdx + 1) % c.NumThreads
+			workerIndex = (workerIndex + 1) % c.NumThreads
 		}
         // Send the queues to the workers
 		for i := 0; i < c.NumThreads; i++ {
@@ -237,16 +237,16 @@ func processWorkerAndSendResults(id int, myDeque *queue.BoundedDequeue,
 		if enableWorkStealing {
 			stolen := false
 			numberQueues := len(allDeques)
-			startIdx := rand.Intn(numberQueues) 
+			startIndex := rand.Intn(numberQueues) 
 			
 			for attempt := 0; attempt < numberQueues; attempt++ {
-				victimIdx := (startIdx + attempt) % numberQueues
+				victimIndex := (startIndex + attempt) % numberQueues
 				
-				if victimIdx == id {
+				if victimIndex == id {
 					continue
 				}
 				
-				if task, err := allDeques[victimIdx].PopTop(); err == nil {
+				if task, err := allDeques[victimIndex].PopTop(); err == nil {
 					content := fetch(task.Url)
 					result := parsingSupport.Result{
 						Url:     task.Url,
