@@ -1,15 +1,5 @@
 package tokenparse
 
-// this is the workhorse package
-
-
-// reference for pipeline implementation
-// https://dev.to/johnscode/the-pipeline-pattern-in-go-2bho
-// https://anupamgogoi.medium.com/go-pipeline-for-a-layman-4791fb4f1e2d
-// https://www.youtube.com/watch?v=8Rn8yOQH62k&t=543s
-// Channels in Go
-// https://www.youtube.com/results?search_query=channels+in+Go
-// https://www.youtube.com/watch?v=nNXhePi3xwE
 
 import (
 	"fmt"
@@ -25,6 +15,9 @@ import (
 
 // maximum number of links in my usecase
 const Max int = 400
+
+// base url for the website - this is my favorite podcast
+const baseUrl string = "https://saket-choudhary.me/seenunseencap/"
 
 ///////////////////////////////////////////////////////////////////////////  
 // HELPER ACROSS PARALLEL AND SEQUENTIAL //
@@ -103,7 +96,7 @@ func runSequential(c parsingSupport.Config) error {
 	randomNumbers := getRandomNumbers(c.NumLinks, Max)
 	
 	for i, num := range randomNumbers {
-		url := "https://saket-choudhary.me/seenunseencap/" + num + ".html"
+		url := baseUrl + num + ".html"
 		content := fetch(url)
 		tokenizedTexts := parsingSupport.ParseAndTokenize(content)
 		result := parsingSupport.Result{
@@ -140,7 +133,7 @@ func generatePipelineLinks(numLinks int) <-chan parsingSupport.Task {
 		defer close(out)
 		randomNumbers := getRandomNumbers(numLinks, Max)
 		for _, num := range randomNumbers {
-			out <- parsingSupport.Task{Url: "https://saket-choudhary.me/seenunseencap/" + num + ".html"}
+			out <- parsingSupport.Task{Url: baseUrl  + num + ".html"}
 		}
 	}()
 	
